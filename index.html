@@ -2,13 +2,42 @@
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="./estiloscss/estilos.css">
+        <style>
+            #musicButton {
+                position: fixed;
+                bottom: 25px;
+                right: 25px;
+                z-index: 9999;
+                background: #222;
+                color: white;
+                border: none;
+                border-radius: 50px;
+                padding: 14px 20px;
+                font-size: 15px;
+                cursor: pointer;
+                box-shadow: 0 4px 12px #0004;
+            }
+    
+            #musicButton:hover {
+                background: #444;
+            }
+    
+            #youtubePlayer {
+                width: 1px;
+                height: 1px;
+                position: fixed;
+                bottom: 75px;
+                right: 10px;
+                z-index: 9998;
+            }
+        </style>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     </head>
 <body>
   <ul class="nav">
-    <li><a href="../index.html">Inicio</a></li>
-    <li><a href="../miprojecto/holamundo.html">Página de prácticas</a></li>
-    <li><a href="../tic2practica01/index.html">Página de grados</a></li>
+    <li><a href="./index.html">Inicio</a></li>
+    <li><a href="./miprojecto/holamundo.html">Página de prácticas</a></li>
+    <li><a href="./tic2practica01/index.html">Página de grados</a></li>
 </ul>
 <div class="contenedor">
     <table>
@@ -55,6 +84,64 @@
        </a>
     </p>
 </div>
+<div id="youtubePlayer"></div>
+<button id="musicButton" onclick="toggleMusic()">
+    🔇 Activar música
+</button>
+<script>
+    let player;
+    let musicPlaying = false;
+    let tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtubePlayer', {
+            width: '200',
+            height: '200',
+            videoId: 'Tg8NwcC24ZY',
+            playerVars: {
+                autoplay: 1,
+                loop: 1,
+                playlist: 'Tg8NwcC24ZY',
+                controls: 0,
+                playsinline: 1
+            },
+            events: {
+                onReady: function(event) {
+                    event.target.setVolume(40);
+                    event.target.playVideo();
+                },
+                onStateChange: function(event) {
+                    if (event.data === YT.PlayerState.PLAYING) {
+                        musicPlaying = true;
+                        updateButton();
+                    }
+                    if (event.data === YT.PlayerState.PAUSED) {
+                        musicPlaying = false;
+                        updateButton();
+                    }
+                    if (event.data === YT.PlayerState.ENDED) {
+                        event.target.playVideo();
+                    }
+                }
+            }
+        });
+    }
+    function toggleMusic() {
+        if (!player) return;
+        if (musicPlaying) {
+            player.pauseVideo();
+        } else {
+            player.playVideo();
+        }
+    }
+    function updateButton() {
+        const button = document.getElementById('musicButton');
+        button.innerHTML = musicPlaying
+            ? '🔊 Música activada'
+            : '🔇 Activar música';
+    }
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
   </html>
